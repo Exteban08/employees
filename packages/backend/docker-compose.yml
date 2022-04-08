@@ -1,0 +1,15 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    container_name: employees_db
+    environment:
+      POSTGRES_DB: employees
+      POSTGRES_PASSWORD: employeesdb
+      POSTGRES_USER: employeesdb
+    volumes:
+      - './postgres_data:/var/lib/postgresql/data'
+    ports:
+      - 5432:5432
