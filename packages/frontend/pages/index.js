@@ -6,6 +6,9 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Button from '@mui/material/Button';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import DrawerComp from "./DrawerComp";
+
+
 
 const Header = () => {
   return (
@@ -13,19 +16,19 @@ const Header = () => {
       <Toolbar>
         <HomeIcon fontSize='large'/>
         <Tabs sx={{ marginLeft: 'auto' }} textColor='white'>
-            
+          {/* Loged in
+          <PersonOutlineIcon /> 
             {/*<Tab label="User name" />*/}
         </Tabs>
-{/*Loged out*/}
-<PersonOutlineIcon />
-<Button sx={{ marginLeft: 'auto' }}
-  >Login
-</Button>
-<Button sx={{ marginLeft: '5px' }}
-  >Register
-</Button>
-
+        {/* Loged out */}
+        <Button sx={{ marginLeft: 'auto' }}
+          >Login
+        </Button>
+        <Button sx={{ marginLeft: '10px' }}
+          >Register
+        </Button>
       </Toolbar>
+      <DrawerComp />
     </AppBar>
   )
 }
