@@ -8,9 +8,6 @@ function RouteGuard({ children }) {
     const router = useRouter();
     const [authorized, setAuthorized] = useState(false);
     const [cookies] = useCookies(['user']);
-    console.log("🚀 ~ file: RouteGuard.js ~ line 11 ~ RouteGuard ~ cookies", cookies)
-    console.log("🚀 ~ file: RouteGuard.js ~ line 36 ~ authCheck ~ cookies['user']", cookies['user'])
-
 
     useEffect(() => {
         // on initial load - run auth check

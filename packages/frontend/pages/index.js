@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from 'next/router';
 import { useCookies } from 'react-cookie';
 
@@ -19,18 +19,31 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 
 
-import { gql } from "@apollo/client";
+import { gql, useLazyQuery } from "@apollo/client";
 import client from "../configs/apollo-client";
+
+import debounce from 'lodash.debounce';
 
 const drawerWidth = 140;
 const settings = ['Logout'];
 
 
-const Header = ({ employees }) => {
+const Home = ({ employees }) => {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [cookies, setCookie, removeCookie] = useCookies(['user']);
   const router = useRouter();
   const user = cookies['user'];
+
+  const [searchEmployees, { loading, error, data }] = useLazyQuery(SEARCH_EMPLOYEES);
+  const [searchText, setSearchText] = React.useState('');
+
+  const debounceSearch = debounce(() => {
+    searchEmployees({ variables: { textSearch: searchText } });
+  }, 1000);
+
+  useEffect(() => {
+    debounceSearch();
+  }, [searchText]);
 
   const handleOpenUserMenu = (event) => {
   setAnchorElUser(event.currentTarget);
@@ -44,6 +57,12 @@ const Header = ({ employees }) => {
       router.push('/login');
     }
   };
+
+  const handleSearchTextChange = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const renderEmployees = Boolean(searchText) ? (data?.searchEmployees || []) : employees;
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -107,11 +126,18 @@ const Header = ({ employees }) => {
             noValidate
             autoComplete="off"
           >
-            <TextField fullWidth id="outlined-basic" label="Search" variant="outlined" />
+            <TextField
+              fullWidth
+              id="outlined-basic"
+              label="Search"
+              variant="outlined"
+              value={searchText}
+              onChange={handleSearchTextChange}
+            />
           </Box>
           {employees.lenght === 0 && <p>No employees found</p>}
           <List>
-            {employees.map(user => (
+            {renderEmployees.map(user => (
               <ListItem
               style={{ display: 'flex', flexDirection: 'column'}}
               alignItems="center"
@@ -159,4 +185,18 @@ export async function getStaticProps() {
   };
 }
 
-export default Header;
+const SEARCH_EMPLOYEES = gql`
+  query SearchEmployees($textSearch: String!) {
+    searchEmployees(textSearch: $textSearch) {
+      id
+      email
+      name
+      lastName
+      nationality
+      phone
+      civilStatus
+    }
+  }
+`;
+
+export default Home;
