@@ -3,6 +3,15 @@ import { PrismaService } from 'providers/prisma.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 
+const tsquerySpecialChars = /[()|&:*!]/g;
+
+const getQueryFromSearchPhrase = (searchPhrase: string) =>
+  searchPhrase
+    .replace(tsquerySpecialChars, " ")
+    .trim()
+    .split(/\s+/)
+    .join(" | ");
+
 @Injectable()
 export class EmployeeService {
   constructor(private prisma: PrismaService) {}
@@ -25,5 +34,17 @@ export class EmployeeService {
 
   remove(id: number) {
     return `This action removes a #${id} employee`;
+  }
+
+  async search(textSearch: string) {
+    const query = getQueryFromSearchPhrase(textSearch);
+    const results = await this.prisma.$queryRaw`
+      SELECT email, name, lastName FROM "Employee"
+      WHERE
+        "textSearch" @@ to_tsquery('english', ${query})
+      ORDER BY ts_rank("textSearch", to_tsquery('english', ${query})) DESC;
+    `;
+
+    return results;
   }
 }

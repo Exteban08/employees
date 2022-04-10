@@ -15,4 +15,9 @@ export class EmployeeResolver {
     async employees() {
         return this.employeeService.findAll();
     }
+
+    @Query(returns => [Employee])
+    async searchEmployees(@Args('textSearch', { type: () => String }) textSearch: string) {
+        return this.employeeService.search(textSearch);
+    }
 }
