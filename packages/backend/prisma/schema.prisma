@@ -11,22 +11,22 @@ datasource db {
 }
 
 model User {
-  id          Int       @id @default(autoincrement())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  email       String    @unique
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+  password  String
+}
+
+model Employee {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
   name        String
   lastName    String
   nationality String
   phone       String
-  civilStatus CivStatus
+  civilStatus String
   birthday    DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
-
-enum CivStatus {
-  MARRIED
-  SINGLE
-  DIVORCED
-  OTHER
-}
-

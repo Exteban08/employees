@@ -1,0 +1,9 @@
+{
+    "[prisma]": {
+      "editor.defaultFormatter": "Prisma.prisma",
+      "editor.formatOnSave": true
+    },
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "typescript.preferences.quoteStyle": "single"
+  }

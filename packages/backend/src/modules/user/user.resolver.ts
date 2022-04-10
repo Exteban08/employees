@@ -8,11 +8,6 @@ export class UserResolver {
 
     @Query(returns => User)
     async user(@Args('id', { type: () => Int }) id: number) {
-        return this.userService.findOne(id);
-    }
-
-    @Query(returns => [User])
-    async users() {
-        return this.userService.findAll();
+        return this.userService.findOne({ id });
     }
 }

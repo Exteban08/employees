@@ -3,6 +3,7 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import HomeIcon from '@mui/icons-material/Home';
 import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
@@ -10,33 +11,70 @@ import TextField from '@mui/material/TextField';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
 
 
 import { gql } from "@apollo/client";
 import client from "../configs/apollo-client";
 
-const drawerWidth = 240;
+const drawerWidth = 140;
+const settings = ['Logout'];
 
-const Header = ({ users }) => {
-  console.log(users);
+
+const Header = ({ employees }) => {
+  console.log(employees);
+
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const handleOpenUserMenu = (event) => {
+  setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+  setAnchorElUser(null);
+  };
 
   return (
     <Box sx={{ display: 'flex' }}>
       <AppBar sx={{ background: '#063970', zIndex: (theme) => theme.zIndex.drawer + 1 }} position="fixed">
         <Toolbar>
-          <HomeIcon fontSize='large'/>
+          <HomeIcon fontSize='large' />
           <Tabs sx={{ marginLeft: 'auto' }} textColor='primary'>
-            {/* Loged in
-            <PersonOutlineIcon /> 
-              {/*<Tab label="User name" />*/}
+            {/* Loged in*/}
+            <PersonOutlineIcon  />
+            <Tab label="User name" onClick={handleOpenUserMenu} />
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              {settings.map((setting) => (
+                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <Typography textAlign="center">{setting}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
           </Tabs>
-          {/* Loged out */}
+          {/* Loged out
           <Button sx={{ marginLeft: 'auto' }}
             >Login
           </Button>
           <Button sx={{ marginLeft: '10px' }}
             >Register
-          </Button>
+          </Button>*/}
         </Toolbar>
       </AppBar>
       <Drawer
@@ -60,15 +98,24 @@ const Header = ({ users }) => {
             noValidate
             autoComplete="off"
           >
-            <TextField id="outlined-basic" label="Outlined" variant="outlined" />
+            <TextField fullWidth id="outlined-basic" label="Search" variant="outlined" />
           </Box>
+          {employees.lenght === 0 && <p>No employees found</p>}
           <List>
-            {users.map(user => (
-              <ListItem style={{ display: 'flex', flexDirection: 'column'}} key={user.id}>
+            {employees.map(user => (
+              <ListItem
+              style={{ display: 'flex', flexDirection: 'column'}}
+              alignItems="center"
+              key={user.id}
+              >
                 <div>{user.id}</div>
                 <div>{user.name}</div>
                 <div>{user.lastName}</div>
                 <div>{user.email}</div>
+                <div>{user.nationality}</div>
+                <div>{user.phone}</div>
+                <div>{user.civilStatus}</div>
+                <div>{user.birthday}</div>
               </ListItem>
             ))}
           </List>
@@ -81,8 +128,8 @@ const Header = ({ users }) => {
 export async function getStaticProps() {
   const { data } = await client.query({
     query: gql`
-      query Users {
-        users {
+      query Employees {
+        employees {
           id
           email
           name
@@ -98,7 +145,7 @@ export async function getStaticProps() {
 
   return {
     props: {
-      users: data.users,
+      employees: data.employees,
     },
   };
 }
