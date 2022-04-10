@@ -1,4 +1,7 @@
 import React from "react";
+import { useRouter } from 'next/router';
+import { useCookies } from 'react-cookie';
+
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import HomeIcon from '@mui/icons-material/Home';
@@ -24,16 +27,22 @@ const settings = ['Logout'];
 
 
 const Header = ({ employees }) => {
-  console.log(employees);
-
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [cookies, setCookie, removeCookie] = useCookies(['user']);
+  const router = useRouter();
+  const user = cookies['user'];
 
   const handleOpenUserMenu = (event) => {
   setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseUserMenu = () => {
-  setAnchorElUser(null);
+  const handleCloseUserMenu = (buttonId) => () => {
+    setAnchorElUser(null);
+
+    if (buttonId === 'Logout') {
+      removeCookie('user');
+      router.push('/login');
+    }
   };
 
   return (
@@ -44,7 +53,7 @@ const Header = ({ employees }) => {
           <Tabs sx={{ marginLeft: 'auto' }} textColor='primary'>
             {/* Loged in*/}
             <PersonOutlineIcon  />
-            <Tab label="User name" onClick={handleOpenUserMenu} />
+            <Tab label={user?.username || ''} onClick={handleOpenUserMenu} />
             <Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"
@@ -59,10 +68,10 @@ const Header = ({ employees }) => {
                 horizontal: 'right',
               }}
               open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
+              onClose={handleCloseUserMenu()}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting} onClick={handleCloseUserMenu(setting)}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}

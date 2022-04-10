@@ -10,6 +10,13 @@ async function main() {
             data: employee,
         });
     }
+
+    await prisma.user.create({
+        data: {
+            username: 'test',
+            password: 'test',
+        },
+    });
 }
 
 main().catch(e => {
