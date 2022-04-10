@@ -39,7 +39,7 @@ export class EmployeeService {
   async search(textSearch: string) {
     const query = getQueryFromSearchPhrase(textSearch);
     const results = await this.prisma.$queryRaw`
-      SELECT email, name, lastName FROM "Employee"
+      SELECT id, email, name, "lastName", nationality, phone, "civilStatus", birthday FROM "Employee"
       WHERE
         "textSearch" @@ to_tsquery('english', ${query})
       ORDER BY ts_rank("textSearch", to_tsquery('english', ${query})) DESC;
