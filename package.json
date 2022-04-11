@@ -12,9 +12,7 @@
     "database:stop": "npx lerna run database:stop",
     "frontend:dev": "npx lerna run --scope @employees/frontend dev",
     "backend:dev": "npx lerna run --scope @employees/backend dev",
-    "dev": "npm run database:start & npx lerna run --parallel dev",
-    "start": "npx lerna run --scope @employees/backend start:prod"
-
+    "dev": "npm run database:start & npx lerna run --parallel dev"
   },
   "dependencies": {
     "@mui/icons-material": "^5.6.0"
