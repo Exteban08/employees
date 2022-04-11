@@ -43,7 +43,8 @@ function EmployeeModal({ employee, refetchEmployees, ...modalProps }) {
       <Box sx={{ backgroundColor: 'white', width: '600px', height: 'auto' }}>
         {employee && (
           <React.Fragment>
-            <Box>
+            <Box p={2}>
+              <h3>Employee Info</h3>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-group">
                     <label>Username</label>
@@ -65,9 +66,24 @@ function EmployeeModal({ employee, refetchEmployees, ...modalProps }) {
                     <input name="phone" type="text" {...register('phone')} className={`form-control ${errors.phone ? 'is-invalid' : ''}`} defaultValue={employee.phone} />
                     <div className="invalid-feedback">{errors.phone?.message}</div>
                 </div>
+                <div className="form-group">
+                    <label>Nationality</label>
+                    <input name="nationality" type="text" defaultValue={employee.nationality} disabled />
+                    <div className="invalid-feedback">{errors.phone?.message}</div>
+                </div>
+                <div className="form-group">
+                    <label>Civil Status</label>
+                    <input name="civilStatus" type="text" defaultValue={employee.civilStatus} disabled />
+                    <div className="invalid-feedback">{errors.phone?.message}</div>
+                </div>
+                <div className="form-group">
+                    <label>Birthday</label>
+                    <input name="birthday" type="text" defaultValue={new Date(employee.birthday).toLocaleString()} disabled />
+                    <div className="invalid-feedback">{errors.phone?.message}</div>
+                </div>
                 <button disabled={formState.isSubmitting} className="btn btn-primary">
                   {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1"></span>}
-                  Login
+                  Edit
                 </button>
                 {errors.apiError &&
                     <div className="alert alert-danger mt-3 mb-0">{errors.apiError?.message}</div>

@@ -11,20 +11,17 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
 import TextField from '@mui/material/TextField';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
+import FormControl from '@mui/material/FormControl';
 
 
-<<<<<<< Updated upstream
 import { gql, useLazyQuery, useQuery } from "@apollo/client";
-=======
-
-import { gql, useLazyQuery } from "@apollo/client";
->>>>>>> Stashed changes
 import client from "../configs/apollo-client";
 
 import debounce from 'lodash.debounce';
@@ -90,8 +87,8 @@ const Home = () => {
       <AppBar sx={{ background: '#063970', zIndex: (theme) => theme.zIndex.drawer + 1 }} position="fixed">
         <Toolbar>
           <HomeIcon fontSize='large' />
-          <Tabs sx={{ marginLeft: 'auto' }} textColor='primary'>
-            <PersonOutlineIcon  />
+          <Tabs sx={{ marginLeft: 'auto' }} value={false}>
+          <PersonOutlineIcon  />
             <Tab label={user?.username || ''} onClick={handleOpenUserMenu} />
             <Menu
               sx={{ mt: '45px' }}
@@ -140,33 +137,58 @@ const Home = () => {
             autoComplete="off"
           >
             <TextField
-              fullWidth
               id="outlined-basic"
               label="Search"
-              variant="outlined"
               value={searchText}
+              variant="outlined"
+              placeholder="Search"
+              fullWidth
               onChange={handleSearchTextChange}
             />
           </Box>
           {employees.lenght === 0 && <p>No employees found</p>}
-          <Card sx={{ maxWidth: 345, backgroundColor: 'gray' }}>
-            {renderEmployees.map(user => (
-              <CardContent key={user.id}>
-                <Typography gutterBottom variant="h5" component="div" textAlign="center">
-                  {user.lastName}
-                  {" "}
-                  {user.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" textAlign="center">
-                  <div>{user.email}</div>
-                  <div>{user.nationality}</div>
-                  <div>{user.phone}</div>
-                  <div>{user.civilStatus}</div>
-                  <div>{user.birthday}</div>
-                </Typography>
-              </CardContent>
+
+          <List>
+            {renderEmployees.map(employee => (
+                <ListItem
+                  style={{ display: 'flex', flexDirection: 'column' }}
+                  alignItems="center"
+                  key={employee.id}
+                >
+                  <ListItemText
+                    sx={{ width: '100%' }}
+                    key={employee.id}
+                    primary={
+                      <React.Fragment>
+                        <Typography gutterBottom variant="h5">
+                        {employee.name}
+                        {" "}
+                        {employee.lastName}
+                        </Typography>
+                      </React.Fragment>
+                    }
+                    secondary={
+                      <React.Fragment>
+                        <Typography
+                          sx={{ display: 'inline' }}
+                          component="span"
+                          variant="body2"
+                          color="text.primary">
+                            <div>{employee.email}</div>
+                            <div>{employee.nationality}</div>
+                            <div>{employee.phone}</div>
+                            <div>{employee.civilStatus}</div>
+                            <div>{new Date(employee.birthday).toLocaleString()}</div>
+                            <Button variant="contained" onClick={handleEmployeeClick(employee)}>
+                              Info
+                            </ Button>
+                          </Typography>
+                      </React.Fragment>
+                    }
+                  />
+                </ListItem>
             ))}
-          </Card>
+          </List>
         </Box>
       </Box>
       <EmployeeModal
