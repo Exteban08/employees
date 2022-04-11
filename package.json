@@ -13,7 +13,7 @@
     "frontend:dev": "npx lerna run --scope @employees/frontend dev",
     "backend:dev": "npx lerna run --scope @employees/backend dev",
     "dev": "npm run database:start & npx lerna run --parallel dev",
-    "start": "npx lerna run --scope @employees/backend start:prod",
+    "start:prod": "npx lerna run --scope @employees/backend start:prod",
     "postinstall": "npx lerna run --scope @employees/backend build"
   },
   "dependencies": {
