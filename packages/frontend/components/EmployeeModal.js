@@ -25,7 +25,6 @@ function EmployeeModal({ employee, refetchEmployees, ...modalProps }) {
   const onSubmit = (employeeData) => {
     updateEmployee({ variables: { id: employee.id, employeeData } })
       .then(res => {
-        console.log('🚀 ~ onSubmit ~ res', res);
         refetchEmployees();
       })
       .catch(res => {

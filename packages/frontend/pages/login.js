@@ -14,14 +14,15 @@ export default function Login() {
   const router = useRouter();
   const [cookies, setCookie] = useCookies(['user']);
   const [gqlErrors, setGqlErrors] = useState([]);
+  const [loginMutation, { data, loading, error }] = useMutation(LOGIN);
 
   useEffect(() => {
-    if (cookies['user']) {
+    if (data?.login) {
+      setGqlErrors([]);
+      setCookie('user', JSON.stringify(data.login));
       router.push('/');
     }
-  }, []);
-
-  const [loginMutation, { data }] = useMutation(LOGIN);
+  }, [data])
 
   const validationSchema = Yup.object().shape({
       username: Yup.string().required('Username is required'),
@@ -34,18 +35,12 @@ export default function Login() {
 
   const onSubmit = ({ username, password }) => {
     loginMutation({ variables: { username, password } })
-      .then(res => {
-        setGqlErrors([]);
-        setCookie('user', JSON.stringify(res.data.login));
-        router.push('/');
-      })
       .catch(res => {
         if (res.graphQLErrors) {
           const resErrors = res.graphQLErrors.map((error) => {
             return error.message;
           });
           setGqlErrors(resErrors);
-          setError(resErrors[0]);
         }
       })
   }
