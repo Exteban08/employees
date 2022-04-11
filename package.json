@@ -10,8 +10,8 @@
   "scripts": {
     "database:start": "npx lerna run database:start",
     "database:stop": "npx lerna run database:stop",
-    "frontend:dev": "npx lerna run --scope @employees/frontend dev",
-    "backend:dev": "npx lerna run --scope @employees/backend dev",
+    "frontend:dev": "npx lerna run --scope frontend dev",
+    "backend:dev": "npx lerna run --scope backend dev",
     "dev": "npm run database:start & npx lerna run --parallel dev"
   },
   "dependencies": {
