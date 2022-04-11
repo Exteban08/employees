@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 import { useCookies } from 'react-cookie';
 
@@ -19,23 +19,29 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 
 
-import { gql, useLazyQuery } from "@apollo/client";
+import { gql, useLazyQuery, useQuery } from "@apollo/client";
 import client from "../configs/apollo-client";
 
 import debounce from 'lodash.debounce';
+import EmployeeModal from "../components/EmployeeModal";
 
 const drawerWidth = 140;
 const settings = ['Logout'];
 
 
-const Home = ({ employees }) => {
+const Home = () => {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [cookies, setCookie, removeCookie] = useCookies(['user']);
   const router = useRouter();
   const user = cookies['user'];
 
-  const [searchEmployees, { loading, error, data }] = useLazyQuery(SEARCH_EMPLOYEES);
+  const { data, refetch: refetchEmployees } = useQuery(GET_EMPLOYEES);
+  const employees = data?.employees || [];
+  const [searchEmployees, { data: searchEmployeesData }] = useLazyQuery(SEARCH_EMPLOYEES);
   const [searchText, setSearchText] = React.useState('');
+
+  const [openEmployeeModal, setOpenEmployeeModal] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   const debounceSearch = debounce(() => {
     searchEmployees({ variables: { textSearch: searchText } });
@@ -62,7 +68,17 @@ const Home = ({ employees }) => {
     setSearchText(e.target.value);
   };
 
-  const renderEmployees = Boolean(searchText) ? (data?.searchEmployees || []) : employees;
+  const handleEmployeeClick = (employee) => () => {
+    setSelectedEmployee(employee);
+    setOpenEmployeeModal(true);
+  }
+
+  const onEmployeeModalClose = () => {
+    setSelectedEmployee(null);
+    setOpenEmployeeModal(false);
+  }
+
+  const renderEmployees = Boolean(searchText) ? (searchEmployeesData?.searchEmployees || []) : employees;
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -137,53 +153,50 @@ const Home = ({ employees }) => {
           </Box>
           {employees.lenght === 0 && <p>No employees found</p>}
           <List>
-            {renderEmployees.map(user => (
+            {renderEmployees.map(employee => (
               <ListItem
-              style={{ display: 'flex', flexDirection: 'column'}}
-              alignItems="center"
-              key={user.id}
+                style={{ display: 'flex', flexDirection: 'column'}}
+                alignItems="center"
+                key={employee.id}
               >
-                <div>{user.id}</div>
-                <div>{user.name}</div>
-                <div>{user.lastName}</div>
-                <div>{user.email}</div>
-                <div>{user.nationality}</div>
-                <div>{user.phone}</div>
-                <div>{user.civilStatus}</div>
-                <div>{user.birthday}</div>
+                <div>{employee.id}</div>
+                <div>{employee.name}</div>
+                <div>{employee.lastName}</div>
+                <div>{employee.email}</div>
+                <div>{employee.nationality}</div>
+                <div>{employee.phone}</div>
+                <div>{employee.civilStatus}</div>
+                <div>{employee.birthday}</div>
+                <Button variant="contained" onClick={handleEmployeeClick(employee)}>See employee</Button>
               </ListItem>
             ))}
           </List>
         </Box>
       </Box>
+      <EmployeeModal
+        open={openEmployeeModal}
+        onClose={onEmployeeModalClose}
+        employee={selectedEmployee}
+        refetchEmployees={refetchEmployees}
+      />
     </Box>
   )
 }
 
-export async function getStaticProps() {
-  const { data } = await client.query({
-    query: gql`
-      query Employees {
-        employees {
-          id
-          email
-          name
-          lastName
-          nationality
-          phone
-          birthday
-          civilStatus
-        }
-      }
-    `,
-  });
-
-  return {
-    props: {
-      employees: data.employees,
-    },
-  };
-}
+const GET_EMPLOYEES = gql`
+  query Employees {
+    employees {
+      id
+      email
+      name
+      lastName
+      nationality
+      phone
+      birthday
+      civilStatus
+    }
+  }
+`;
 
 const SEARCH_EMPLOYEES = gql`
   query SearchEmployees($textSearch: String!) {

@@ -4,11 +4,11 @@ services:
   db:
     image: postgres
     restart: always
-    container_name: employees_db
+    container_name: employees
     environment:
       POSTGRES_DB: employees
-      POSTGRES_PASSWORD: employeesdb
-      POSTGRES_USER: employeesdb
+      POSTGRES_PASSWORD: employees
+      POSTGRES_USER: employees
     volumes:
       - './postgres_data:/var/lib/postgresql/data'
     ports:

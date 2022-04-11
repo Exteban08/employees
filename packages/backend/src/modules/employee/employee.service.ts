@@ -1,27 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'providers/prisma.service';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 
 const tsquerySpecialChars = /[()|&:*!]/g;
 
 const getQueryFromSearchPhrase = (searchPhrase: string) =>
   searchPhrase
-    .replace(tsquerySpecialChars, " ")
+    .replace(tsquerySpecialChars, ' ')
     .trim()
     .split(/\s+/)
-    .join(" | ");
+    .join(' | ');
 
 @Injectable()
 export class EmployeeService {
   constructor(private prisma: PrismaService) {}
-
-  create(createEmployeeDto: CreateEmployeeDto) {
-    return 'This action adds a new employee';
-  }
-
   findAll() {
-    return this.prisma.employee.findMany();
+    return this.prisma.employee.findMany({
+      orderBy: {
+        name: 'asc',
+      },
+    });
   }
 
   findOne(id: number) {
@@ -29,11 +27,10 @@ export class EmployeeService {
   }
 
   update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
-    return `This action updates a #${id} employee`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} employee`;
+    return this.prisma.employee.update({
+      where: { id },
+      data: updateEmployeeDto,
+    });
   }
 
   async search(textSearch: string) {
