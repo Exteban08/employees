@@ -13,8 +13,7 @@
     "frontend:dev": "npx lerna run --scope @employees/frontend dev",
     "backend:dev": "npx lerna run --scope @employees/backend dev",
     "dev": "npm run database:start & npx lerna run --parallel dev",
-    "start": "npx lerna run --scope @employees/backend start:prod",
-    "heroku-postbuild": "npx lerna run --scope @employees/backend build"
+    "start": "npx lerna run --scope @employees/backend start:prod"
   },
   "dependencies": {
     "@mui/icons-material": "^5.6.0"
